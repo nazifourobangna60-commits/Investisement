@@ -2,7 +2,7 @@
 <html lang="fr">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Jobs France</title>
     
     <!-- Tailwind CSS -->
@@ -56,6 +56,8 @@
       body {
         background-color: #f3f4f6;
         -webkit-tap-highlight-color: transparent;
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
       }
       /* Hide scrollbar for Chrome, Safari and Opera */
       .no-scrollbar::-webkit-scrollbar {
@@ -84,7 +86,20 @@
       <div class="min-h-screen flex flex-col items-center justify-center bg-gray-50 text-gray-400">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-800 mb-4"></div>
         <p class="text-sm font-medium animate-pulse">Chargement de Jobs France...</p>
+        
+        <!-- Bouton de secours si le chargement échoue -->
+        <button id="reset-btn" onclick="localStorage.clear(); window.location.reload();" class="mt-8 text-xs text-red-400 border border-red-200 rounded px-3 py-1 hidden hover:bg-red-50">
+           Réinitialiser les données (Si bloqué)
+        </button>
       </div>
+
+      <script>
+        // Afficher le bouton de reset après 4 secondes si l'app ne charge pas
+        setTimeout(() => {
+            const btn = document.getElementById('reset-btn');
+            if(btn) btn.classList.remove('hidden');
+        }, 4000);
+      </script>
     </div>
   </body>
 </html>
