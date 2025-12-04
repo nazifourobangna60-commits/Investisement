@@ -5,6 +5,7 @@ const Dashboard: React.FC<{ setTab: (t: string) => void }> = ({ setTab }) => {
   const { user, myInvestments, timeUntilNextClaim, canClaim, claimEarnings } = useApp();
 
   const formatTime = (ms: number) => {
+    if (isNaN(ms) || ms < 0) return "0h 0m 0s";
     const totalSeconds = Math.floor(ms / 1000);
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);

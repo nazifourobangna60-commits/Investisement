@@ -42,15 +42,22 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   // Timer state
   const [timeUntilNextClaim, setTimeUntilNextClaim] = useState<number>(0);
 
-  // Load from local storage on mount
+  // Load from local storage on mount with Error Handling
   useEffect(() => {
-    const storedUser = localStorage.getItem('jf_user');
-    const storedInvestments = localStorage.getItem('jf_investments');
-    const storedTransactions = localStorage.getItem('jf_transactions');
+    try {
+      const storedUser = localStorage.getItem('jf_user');
+      const storedInvestments = localStorage.getItem('jf_investments');
+      const storedTransactions = localStorage.getItem('jf_transactions');
 
-    if (storedUser) setUser(JSON.parse(storedUser));
-    if (storedInvestments) setMyInvestments(JSON.parse(storedInvestments));
-    if (storedTransactions) setTransactions(JSON.parse(storedTransactions));
+      if (storedUser) setUser(JSON.parse(storedUser));
+      if (storedInvestments) setMyInvestments(JSON.parse(storedInvestments));
+      if (storedTransactions) setTransactions(JSON.parse(storedTransactions));
+    } catch (error) {
+      console.error("Erreur de chargement des données, réinitialisation...", error);
+      localStorage.removeItem('jf_user');
+      localStorage.removeItem('jf_investments');
+      localStorage.removeItem('jf_transactions');
+    }
   }, []);
 
   // Save changes
@@ -66,7 +73,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
     const interval = setInterval(() => {
       const now = Date.now();
-      const elapsed = now - user.lastClaimTime;
+      // Safety check for user.lastClaimTime
+      const lastClaim = user.lastClaimTime || now;
+      const elapsed = now - lastClaim;
       const remaining = Math.max(0, EARNING_INTERVAL_MS - elapsed);
       setTimeUntilNextClaim(remaining);
     }, 1000);
