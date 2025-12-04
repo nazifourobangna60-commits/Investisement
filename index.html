@@ -4,9 +4,21 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
     <title>Jobs France</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome avec attributs de sécurité pour éviter le blocage 'Tracking Prevention' -->
+    <link 
+      rel="stylesheet" 
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
+      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" 
+      crossorigin="anonymous" 
+      referrerpolicy="no-referrer" 
+    />
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <script>
       tailwind.config = {
         theme: {
@@ -67,6 +79,12 @@
 </script>
 </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- État de chargement initial pour éviter l'écran blanc -->
+      <div class="min-h-screen flex flex-col items-center justify-center bg-gray-50 text-gray-400">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-800 mb-4"></div>
+        <p class="text-sm font-medium animate-pulse">Chargement de Jobs France...</p>
+      </div>
+    </div>
   </body>
 </html>

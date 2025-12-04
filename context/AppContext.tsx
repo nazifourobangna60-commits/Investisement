@@ -42,21 +42,45 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   // Timer state
   const [timeUntilNextClaim, setTimeUntilNextClaim] = useState<number>(0);
 
-  // Load from local storage on mount with Error Handling
+  // Load from local storage on mount with Robust Error Handling
   useEffect(() => {
     try {
       const storedUser = localStorage.getItem('jf_user');
       const storedInvestments = localStorage.getItem('jf_investments');
       const storedTransactions = localStorage.getItem('jf_transactions');
 
-      if (storedUser) setUser(JSON.parse(storedUser));
-      if (storedInvestments) setMyInvestments(JSON.parse(storedInvestments));
-      if (storedTransactions) setTransactions(JSON.parse(storedTransactions));
+      if (storedUser) {
+        const parsedUser = JSON.parse(storedUser);
+        if (parsedUser) setUser(parsedUser);
+      }
+
+      if (storedInvestments) {
+        const parsedInvestments = JSON.parse(storedInvestments);
+        // Ensure it is an array to prevent crash
+        if (Array.isArray(parsedInvestments)) {
+             setMyInvestments(parsedInvestments);
+        } else {
+             setMyInvestments([]);
+        }
+      }
+
+      if (storedTransactions) {
+        const parsedTransactions = JSON.parse(storedTransactions);
+        // Ensure it is an array to prevent crash
+        if (Array.isArray(parsedTransactions)) {
+            setTransactions(parsedTransactions);
+        } else {
+            setTransactions([]);
+        }
+      }
     } catch (error) {
-      console.error("Erreur de chargement des données, réinitialisation...", error);
+      console.error("Erreur critique de chargement des données. Réinitialisation de sécurité.", error);
+      // Fallback: Clear potentially corrupted data to let the app start fresh
       localStorage.removeItem('jf_user');
       localStorage.removeItem('jf_investments');
       localStorage.removeItem('jf_transactions');
+      setMyInvestments([]);
+      setTransactions([]);
     }
   }, []);
 
