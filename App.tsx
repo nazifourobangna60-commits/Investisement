@@ -12,7 +12,7 @@ import Notifications from './components/Notifications';
 // Component to handle authenticated views
 const AuthenticatedApp: React.FC = () => {
   const [currentTab, setCurrentTab] = useState('home');
-  const { user, simulateReferral } = useApp();
+  const { user, simulateReferral, logout } = useApp();
   const [copied, setCopied] = useState(false);
 
   const copyRefLink = () => {
@@ -112,7 +112,7 @@ const AuthenticatedApp: React.FC = () => {
                 </div>
 
                 <button 
-                    onClick={() => window.location.reload()} 
+                    onClick={logout} 
                     className="text-red-500 font-medium text-sm hover:bg-red-50 px-4 py-2 rounded-lg transition-colors"
                 >
                     Se déconnecter
