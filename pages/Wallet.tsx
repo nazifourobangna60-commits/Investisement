@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { PaymentMethod } from '../types';
+import { PaymentMethod, Transaction } from '../types';
 import { ADMIN_EMAIL } from '../constants';
 
 const Wallet: React.FC = () => {
-  const { user, deposit, withdraw } = useApp();
-  const [activeTab, setActiveTab] = useState<'deposit' | 'withdraw'>('deposit');
+  const { user, deposit, withdraw, transactions } = useApp();
+  const [activeTab, setActiveTab] = useState<'deposit' | 'withdraw' | 'history'>('deposit');
   const [amount, setAmount] = useState('');
   const [method, setMethod] = useState<PaymentMethod>(PaymentMethod.MIX);
   const [loading, setLoading] = useState(false);
@@ -42,6 +42,7 @@ const Wallet: React.FC = () => {
              setAmount('');
              setDepositPhone('');
              setPaymentLink('');
+             setActiveTab('history'); // Rediriger vers l'historique
          }
          setLoading(false);
     }, 2000);
@@ -62,6 +63,7 @@ const Wallet: React.FC = () => {
         setStatusMsg("Transaction initiée. L'argent apparaîtra après confirmation de l'administration.");
         setAmount('');
         setDepositPhone('');
+        setTimeout(() => setActiveTab('history'), 1500); // Rediriger vers l'historique
     } else {
         setStatusMsg("Erreur ou annulation de la transaction.");
     }
@@ -84,10 +86,35 @@ const Wallet: React.FC = () => {
         setAmount('');
         setWithdrawPhone('');
         setPassword('');
+        setTimeout(() => setActiveTab('history'), 2000); // Rediriger vers l'historique
     } else {
         setStatusMsg(result);
     }
     setLoading(false);
+  };
+
+  // Helper pour l'affichage de l'historique
+  const getTxDetails = (tx: Transaction) => {
+    switch(tx.type) {
+        case 'DEPOSIT':
+            return { icon: 'fa-arrow-down', color: 'text-green-600', bg: 'bg-green-100', label: 'Dépôt', sign: '+' };
+        case 'WITHDRAWAL':
+            return { icon: 'fa-arrow-up', color: 'text-red-600', bg: 'bg-red-100', label: 'Retrait', sign: '-' };
+        case 'EARNING':
+            return { icon: 'fa-coins', color: 'text-blue-600', bg: 'bg-blue-100', label: 'Revenus', sign: '+' };
+        case 'BONUS':
+            return { icon: 'fa-gift', color: 'text-purple-600', bg: 'bg-purple-100', label: 'Bonus', sign: '+' };
+        case 'REFERRAL':
+            return { icon: 'fa-users', color: 'text-yellow-600', bg: 'bg-yellow-100', label: 'Parrainage', sign: '+' };
+        default:
+            return { icon: 'fa-circle', color: 'text-gray-600', bg: 'bg-gray-100', label: 'Autre', sign: '' };
+    }
+  };
+
+  const formatDate = (timestamp: number) => {
+    return new Date(timestamp).toLocaleDateString('fr-FR', {
+        day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+    });
   };
 
   return (
@@ -96,25 +123,36 @@ const Wallet: React.FC = () => {
       <div className="flex bg-gray-200 p-1 rounded-xl mb-6">
         <button
           onClick={() => { setActiveTab('deposit'); setStatusMsg(''); setPaymentLink(''); }}
-          className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${activeTab === 'deposit' ? 'bg-white shadow-sm text-primary' : 'text-gray-500'}`}
+          className={`flex-1 py-2 text-xs md:text-sm font-bold rounded-lg transition-all ${activeTab === 'deposit' ? 'bg-white shadow-sm text-primary' : 'text-gray-500'}`}
         >
           Dépôt
         </button>
         <button
           onClick={() => { setActiveTab('withdraw'); setStatusMsg(''); setPaymentLink(''); }}
-          className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${activeTab === 'withdraw' ? 'bg-white shadow-sm text-primary' : 'text-gray-500'}`}
+          className={`flex-1 py-2 text-xs md:text-sm font-bold rounded-lg transition-all ${activeTab === 'withdraw' ? 'bg-white shadow-sm text-primary' : 'text-gray-500'}`}
         >
           Retrait
         </button>
+        <button
+          onClick={() => { setActiveTab('history'); setStatusMsg(''); setPaymentLink(''); }}
+          className={`flex-1 py-2 text-xs md:text-sm font-bold rounded-lg transition-all ${activeTab === 'history' ? 'bg-white shadow-sm text-primary' : 'text-gray-500'}`}
+        >
+          Historique
+        </button>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 min-h-[400px]">
+        
+        {/* TITRE */}
         <h3 className="text-lg font-bold text-gray-800 mb-4">
-          {activeTab === 'deposit' ? 'Recharger le compte' : 'Demander un retrait'}
+          {activeTab === 'deposit' && 'Recharger le compte'}
+          {activeTab === 'withdraw' && 'Demander un retrait'}
+          {activeTab === 'history' && 'Historique des transactions'}
         </h3>
 
-        {activeTab === 'deposit' ? (
-          <>
+        {/* CONTENU : DEPOT */}
+        {activeTab === 'deposit' && (
+          <div className="animate-fade-in">
             {/* Inputs First for Deposit */}
             <div className="space-y-4 mb-6">
               <div>
@@ -171,7 +209,7 @@ const Wallet: React.FC = () => {
               </div>
             </div>
 
-            {/* ACTION BUTTON - Sous les sélecteurs */}
+            {/* ACTION BUTTON */}
             {method === PaymentMethod.LINK ? (
                 !paymentLink ? (
                     <button
@@ -202,16 +240,18 @@ const Wallet: React.FC = () => {
                 </button>
             )}
 
-            {/* Security Info */}
+             {/* Security Info */}
              {method !== PaymentMethod.LINK && (
                 <p className="text-[10px] text-gray-400 italic text-center">
                     <i className="fas fa-lock mr-1"></i> Transaction sécurisée. Les fonds vont vers le compte marchand.
                 </p>
              )}
-          </>
-        ) : (
-          /* Withdraw Section */
-          <>
+          </div>
+        )}
+
+        {/* CONTENU : RETRAIT */}
+        {activeTab === 'withdraw' && (
+          <div className="animate-fade-in">
              <div className="space-y-4 mb-6">
               <div>
                 <label className="block text-xs font-semibold text-gray-500 mb-1">Montant à retirer</label>
@@ -279,10 +319,55 @@ const Wallet: React.FC = () => {
             <div className="bg-yellow-50 p-3 rounded-lg border border-yellow-100 text-[10px] text-yellow-800">
                 <p><strong>Note importante :</strong> Les retraits sont traités mensuellement. Une validation admin est requise par email.</p>
             </div>
-          </>
+          </div>
         )}
 
-        {statusMsg && (
+        {/* CONTENU : HISTORIQUE */}
+        {activeTab === 'history' && (
+           <div className="animate-fade-in flex flex-col h-full">
+                {transactions.length === 0 ? (
+                    <div className="flex-1 flex flex-col items-center justify-center text-center py-10 opacity-60">
+                        <i className="fas fa-history text-4xl text-gray-300 mb-3"></i>
+                        <p className="text-sm text-gray-400">Aucune transaction pour le moment.</p>
+                    </div>
+                ) : (
+                    <div className="space-y-3">
+                        {transactions.map((tx) => {
+                            const info = getTxDetails(tx);
+                            return (
+                                <div key={tx.id} className="flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors">
+                                    <div className="flex items-center gap-3">
+                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${info.bg} ${info.color}`}>
+                                            <i className={`fas ${info.icon}`}></i>
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-sm text-gray-800">{info.label}</p>
+                                            <p className="text-[10px] text-gray-400">{formatDate(tx.date)}</p>
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className={`font-bold text-sm ${tx.type === 'WITHDRAWAL' ? 'text-gray-800' : 'text-green-600'}`}>
+                                            {info.sign}{tx.amount.toLocaleString()} F
+                                        </p>
+                                        <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
+                                            tx.status === 'COMPLETED' ? 'bg-green-100 text-green-700' :
+                                            tx.status === 'WAITING_ADMIN' ? 'bg-yellow-100 text-yellow-700' :
+                                            'bg-gray-100 text-gray-600'
+                                        }`}>
+                                            {tx.status === 'WAITING_ADMIN' ? 'En attente' : 
+                                             tx.status === 'COMPLETED' ? 'Succès' : tx.status}
+                                        </span>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
+           </div>
+        )}
+
+        {/* Message d'état (Erreur/Succès) pour Dépôt/Retrait */}
+        {activeTab !== 'history' && statusMsg && (
             <div className={`mt-4 p-3 rounded-lg text-xs font-medium text-center ${statusMsg.includes('Erreur') ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-700'}`}>
                 {statusMsg}
             </div>
