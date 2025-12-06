@@ -176,7 +176,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       const targetNumber = method.includes('Flooz') ? MERCHANT_NUMBERS.FLOOZ : MERCHANT_NUMBERS.MIX;
       console.log(`[SECURE TRANSFER] Initiation du dépôt de ${amount} vers le compte sécurisé (Masked: ${targetNumber})`);
       
-      // 2. Délai pour simuler la validation administrateur (Réduit à 1s pour rapidité)
+      // 2. Délai minime pour l'expérience utilisateur (100ms)
       setTimeout(() => {
         if (!user) {
             resolve(false); 
@@ -197,7 +197,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         setUser(prev => prev ? { ...prev, balance: prev.balance + amount } : null);
         addNotification('success', `Dépôt de ${amount.toLocaleString()} F reçu et validé !`);
         resolve(true);
-      }, 1000); // Délai réduit à 1 seconde
+      }, 100); // Super rapide
     });
   };
 
@@ -230,7 +230,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         setUser(prev => prev ? { ...prev, balance: prev.balance - amount } : null);
         addNotification('success', "Demande de retrait envoyée à l'administration.");
         resolve("SUCCESS");
-      }, 800); // Délai réduit à 800ms
+      }, 100); // Super rapide
     });
   };
 

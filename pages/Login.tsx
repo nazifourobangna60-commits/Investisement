@@ -24,7 +24,7 @@ const Login: React.FC<LoginProps> = ({ onSwitch, isRegistering }) => {
     e.preventDefault();
     setLoading(true);
     
-    // Délai réduit à 500ms pour une sensation de rapidité
+    // Délai minimal (100ms) pour une sensation de réactivité immédiate
     setTimeout(() => {
       if (isRegistering) {
         // Registration Logic
@@ -43,7 +43,7 @@ const Login: React.FC<LoginProps> = ({ onSwitch, isRegistering }) => {
         login(username, phone);
       }
       setLoading(false);
-    }, 500);
+    }, 100);
   };
 
   return (

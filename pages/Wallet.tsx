@@ -23,13 +23,13 @@ const Wallet: React.FC = () => {
         return;
     }
     setLoading(true);
-    // Simulation de génération de lien accélérée
+    // Simulation de génération de lien accélérée (100ms)
     setTimeout(() => {
         const uniqueId = Math.random().toString(36).substring(7);
         setPaymentLink(`https://pay.jobsfrance.app/secure/${uniqueId}?amt=${amount}`);
         setStatusMsg("Lien généré avec succès. Cliquez ci-dessous pour payer.");
         setLoading(false);
-    }, 600);
+    }, 100);
   };
 
   const simulatePaymentClick = async () => {
@@ -45,7 +45,7 @@ const Wallet: React.FC = () => {
              setActiveTab('history'); // Rediriger vers l'historique
          }
          setLoading(false);
-    }, 1000);
+    }, 100);
   };
 
   const handleDeposit = async () => {
@@ -63,7 +63,7 @@ const Wallet: React.FC = () => {
         setStatusMsg("Transaction initiée. L'argent apparaîtra après confirmation de l'administration.");
         setAmount('');
         setDepositPhone('');
-        setTimeout(() => setActiveTab('history'), 800); // Rediriger vers l'historique rapidement
+        setTimeout(() => setActiveTab('history'), 500); // Rediriger vers l'historique rapidement
     } else {
         setStatusMsg("Erreur ou annulation de la transaction.");
     }
@@ -86,7 +86,7 @@ const Wallet: React.FC = () => {
         setAmount('');
         setWithdrawPhone('');
         setPassword('');
-        setTimeout(() => setActiveTab('history'), 1000); // Rediriger vers l'historique
+        setTimeout(() => setActiveTab('history'), 500); // Rediriger vers l'historique
     } else {
         setStatusMsg(result);
     }

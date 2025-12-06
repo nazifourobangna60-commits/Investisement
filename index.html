@@ -5,16 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Jobs France</title>
     
+    <!-- Optimisation des connexions CDN -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Font Awesome avec attributs de sécurité pour éviter le blocage 'Tracking Prevention' -->
+    <!-- Font Awesome simplifié pour éviter les erreurs "Tracking Prevention" -->
     <link 
       rel="stylesheet" 
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
-      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" 
-      crossorigin="anonymous" 
-      referrerpolicy="no-referrer" 
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -45,7 +47,7 @@
               }
             },
             animation: {
-              'fade-in': 'fadeIn 0.5s ease-out',
+              'fade-in': 'fadeIn 0.3s ease-out',
               'fade-in-down': 'fadeInDown 0.3s ease-out',
             }
           }
@@ -82,23 +84,17 @@
 </head>
   <body>
     <div id="root">
-      <!-- État de chargement initial pour éviter l'écran blanc -->
+      <!-- État de chargement initial optimisé -->
       <div class="min-h-screen flex flex-col items-center justify-center bg-gray-50 text-gray-400">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-800 mb-4"></div>
-        <p class="text-sm font-medium animate-pulse">Chargement de Jobs France...</p>
-        
-        <!-- Bouton de secours si le chargement échoue -->
-        <button id="reset-btn" onclick="localStorage.clear(); window.location.reload();" class="mt-8 text-xs text-red-400 border border-red-200 rounded px-3 py-1 hidden hover:bg-red-50">
-           Réinitialiser les données (Si bloqué)
-        </button>
+        <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-800 mb-4"></div>
       </div>
 
       <script>
-        // Afficher le bouton de reset après 4 secondes si l'app ne charge pas
+        // Afficher le bouton de reset si vraiment bloqué
         setTimeout(() => {
             const btn = document.getElementById('reset-btn');
             if(btn) btn.classList.remove('hidden');
-        }, 4000);
+        }, 3000);
       </script>
     </div>
   </body>
